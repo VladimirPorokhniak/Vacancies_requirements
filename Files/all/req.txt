@@ -1,0 +1,129 @@
+Windows,     Windows Server, MS Windows Server, Windows Server 2016/2019
+Linux,       UNIX, OS Linux, CentOS Debian, Linux-based
+ISO 27000,   ISO-27000,     ISO27000, ISO 2700, ISO 27***, ISO 27000−27005
+SIEM,        Security information and event management
+WAF
+ISO/IEC 17799:2005
+        27000
+        27001
+        27002-17799
+        27005
+        31000
+Nist
+BSI
+SANS
+MDM
+NIST
+SANS
+SOX-404
+OSI
+SQL
+Java
+Javascript,     JS
+C,              C\C++, C++
+Python
+Bash
+PKI
+Open Source
+IDS / IPS, IPS\IDS, IPS, IDS
+Privileged Access Management системи
+Web Proxy
+DLP
+Antimalware
+Snort
+RegExp
+Web Security Scanner
+WmWare
+PHP
+Metasploit
+Burp, Burp Suite pro
+Acunetix
+Nessus
+Nmap
+sqlmap
+nikto
+PS
+reverse engineering
+API REST
+GraphQL
+СУБД, database management system, DBMS
+CTF, Capture the Flag
+BugBounty
+firewall
+Security SDLC
+CI\CD
+DB, БД
+PCI DSS
+ISO 31000
+BSI
+CISSP
+CISM
+CISA
+MySQL
+MySQL cluster
+C#
+Delphi
+Cisco
+Microtik
+powershell
+Zabbix
+Ansible
+Google Clouds API
+Security Google Workspace
+ISO
+SDLC
+IDM
+Cobit
+ITIL
+Cerfited Lead Auditor
+MariaDb
+TCP/IP, TCP / IP
+INGFW
+PAM
+docker
+KVM
+OpenStack
+Apache
+nginx
+Lamp
+ISPManager
+cPanel
+Plesk
+Kali Linux
+ZAP
+SOLID
+Design Patterns
+HTTP (s)
+HTML
+CSS
+AJAX
+Ruby
+Penetration Testing
+.NET
+Perl
+OSCP
+CEH
+OWASP Top Ten, OWASP Top-10
+OWASP Web Security Testing Guide
+OWASP Application Security Verification Standard, OWASP ASVS
+OWASP Cheat Sheet Series
+OWASP API Security
+OWASP SAMM
+PCI
+EU GDPR
+injecting SQL
+XSS
+EPP
+EDR, Endpoint Detection and Response
+NGFW
+НД ТЗІ
+Oracle
+MS SQL
+OIM
+Microsort SQL Server
+Cisco Adaptive Security Appliance (ASA) Software
+Cisco Adaptive Security Device Manager
+Microsoft Hyper-V
+Identity Manager System
+Web Application firewall
+anti DDoS систем
