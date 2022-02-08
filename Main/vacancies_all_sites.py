@@ -402,7 +402,7 @@ class Vacancy:
 if __name__ == '__main__':
     s_time = datetime.datetime.now()
     a = Vacancy()
-    a.get_vacancies_data('security')
+    a.get_vacancies_data_th('security')
     a.to_excel('report(all).xlsx')
     f_time = datetime.datetime.now()
     print(f'Done ({(f_time - s_time).seconds}.{int((f_time - s_time).microseconds)} secs).')
