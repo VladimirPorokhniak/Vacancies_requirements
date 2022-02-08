@@ -7,8 +7,10 @@ import time
 import threading
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options as c_Options
+from selenium.webdriver.chrome.service import Service as c_Service
+from selenium.webdriver.firefox.options import Options as f_Options
+from selenium.webdriver.firefox.service import Service as f_Service
 from selenium.webdriver.common.by import By
 
 
@@ -22,20 +24,24 @@ class Vacancy:
         self.__debug = show
         self.__path = None
         self.def_param = def_param
-        self.__vacancies_requirements_dir = vacancies_req_dir
+        self.__vacancies_requirements_dir = os.path.dirname(__file__) + '/' + vacancies_req_dir
         self.__vacancy_requirements: dict = dict()
         self.__vacancy_requirements_statistics: dict = dict()
         self.__vacancies_links = {'work_ua_links': [], 'dou_ua_links': []}
         self.vacancies = list()
         self.__jobs_desc = []
         self.__prepare()
-        driver = Service(os.getcwd() + "/chromedriver(linux)")
-        chrome_option = Options()
-        if self.__debug < 3:
-            chrome_option.add_argument('--headless')
-        self.__wd1 = webdriver.Chrome(options=chrome_option, service=driver)
-        self.__wd2 = webdriver.Chrome(options=chrome_option, service=driver)
-        # self.__wd3 = webdriver.Chrome(options=chrome_option, service=driver)
+        # # driver = Service(os.getcwd() + "/chromedriver(linux)")
+        # driver = f_Service(os.getcwd() + "/Vacancies_requirements/WebDrivers/geckodriver(linux)")
+        # option = f_Options()
+        # if self.__debug < 3:
+        #      # option.add_argument('--headless')
+        #     pass
+        # # self.__wd1 = webdriver.Chrome(options=option, service=driver)
+        # # self.__wd2 = webdriver.Chrome(options=option, service=driver)
+        # self.__wd1 = webdriver.Firefox(options=option, service=driver)
+        # # self.__wd2 = webdriver.Firefox(options=option, service=driver)
+        # # self.__wd3 = webdriver.Chrome(options=chrome_option, service=driver)
 
     def __load_data(self):
         if not os.path.exists(self.__path):
@@ -127,12 +133,12 @@ class Vacancy:
             string = re.sub(r'[a-zа-яёїє]*(([a-zа-яёїє])([A-ZА-ЯЁЇЄ]))', r'\2 \3', str(string1))
         return str(string).replace('&amp;', '&').replace('\xa0', ' ')
 
-    def __get_vacancy_list_dou_ua(self, search_request):
+    def __get_vacancy_list_dou_ua(self, search_request, webdriver):
         search_request = "+".join(search_request.split())
         vacancy_list_url = f'https://jobs.dou.ua/vacancies/?category=Security&search={search_request}&descr=1'
-        self.__wd2.get(vacancy_list_url)
+        webdriver.get(vacancy_list_url)
         try:
-            link = self.__wd2.find_element(By.LINK_TEXT, value='English')
+            link = webdriver.find_element(By.LINK_TEXT, value='English')
             link.click()
         except Exception as e:
             if self.__debug > 1:
@@ -141,24 +147,24 @@ class Vacancy:
         for number in range(1, 100):
             time.sleep(0.5)
             try:
-                link = self.__wd2.find_element(By.LINK_TEXT, value='More jobs')
+                link = webdriver.find_element(By.LINK_TEXT, value='More jobs')
                 link.click()
             except Exception as e:
                 if self.__debug > 1:
                     print('Exception:', e)
                     print(number)
                 break
-        page_data = BeautifulSoup(self.__wd2.page_source, 'html.parser')
+        page_data = BeautifulSoup(webdriver.page_source, 'html.parser')
         vacancy_list = set(re.findall(r'<a class="vt" href="(.*?)">', str(page_data)))
         self.__vacancies_links['dou_ua_links'] = list(vacancy_list)
 
-    def __get_vacancy_list_work_ua(self, search_request):
+    def __get_vacancy_list_work_ua(self, search_request, webdriver):
         search_request = '-'.join(search_request.split())
         vacancy_list_url = f'https://www.work.ua/en/jobs-it-{search_request}/?advs=1&page='
         vacancy_list = set()
         for number in range(1, 100):
-            self.__wd1.get(vacancy_list_url + str(number))
-            page_data = BeautifulSoup(self.__wd1.page_source, 'html.parser')
+            webdriver.get(vacancy_list_url + str(number))
+            page_data = BeautifulSoup(webdriver.page_source, 'html.parser')
             if all(i in str(page_data) for i in
                    ['There are no jobs matching your query ', ' with selected filters yet.']):
                 if self.__debug > 1:
@@ -169,7 +175,7 @@ class Vacancy:
             vacancy_list.update(ids)
         self.__vacancies_links['work_ua_links'] = list(vacancy_list)
 
-    def __get_vacancy_info_dou_ua(self, vacancy_url: str):
+    def __get_vacancy_info_dou_ua(self, vacancy_url: str, webdriver):
         vacancy = {
             'Date of publishing': '',
             'Seniority level': '',
@@ -183,8 +189,8 @@ class Vacancy:
             'Source': 'Dou.ua',
             'Source link': vacancy_url,
         }
-        self.__wd2.get(vacancy_url + '?switch_lang=en')
-        page_data = BeautifulSoup(self.__wd2.page_source, 'html.parser', from_encoding="ut8-8")
+        webdriver.get(vacancy_url + '?switch_lang=en')
+        page_data = BeautifulSoup(webdriver.page_source, 'html.parser')
         vacancy['Date of publishing'] = \
             re.search(r'\n\t\t\t(.*)\n\n\t\t',
                       self.__normalized_str(page_data.find(attrs={'class': 'date'}), 1)).groups()[
@@ -207,7 +213,7 @@ class Vacancy:
         vacancy = self.__get_vacancy_requirements(vacancy)
         self.vacancies.append(vacancy)
 
-    def __get_vacancy_info_work_ua(self, vacancy_id: str):
+    def __get_vacancy_info_work_ua(self, vacancy_id: str, webdriver):
         vacancy_url_ua = f'https://www.work.ua/jobs/{vacancy_id}/'
         vacancy_url_en = f'https://www.work.ua/en/jobs/{vacancy_id}/'
         vacancy = {
@@ -223,8 +229,8 @@ class Vacancy:
             'Source': 'Work.ua',
             'Source link': vacancy_url_ua,
         }
-        self.__wd1.get(vacancy_url_en)
-        page_data = BeautifulSoup(self.__wd1.page_source, 'html.parser')
+        webdriver.get(vacancy_url_en)
+        page_data = BeautifulSoup(webdriver.page_source, 'html.parser')
         job_desc = self.__normalized_str((page_data.find(attrs={'id': 'job-description'})).text, 2)
         self.__jobs_desc.append(self.__normalized_str(page_data, 2))
         main_info = self.__normalized_str(page_data.find(attrs={'property': 'og:description'}), 1)
@@ -269,14 +275,19 @@ class Vacancy:
         """
         :param search_request: (split search requests by space)
         """
+        driver = f_Service(os.getcwd() + "/Vacancies_requirements/WebDrivers/geckodriver(linux)")
+        option = f_Options()
+        if self.__debug < 3:
+            option.headless = True
+        self.__wd1 = webdriver.Firefox(options=option, service=driver)
         self.__path = f'vacancies({"_".join(search_request.split())}).json'
         if not self.__load_data():
             try:
                 if self.__debug > 0:
                     print("Collecting list of vacancies...", end=' \n')
                 s1_time = datetime.datetime.now()
-                self.__get_vacancy_list_work_ua(search_request)
-                self.__get_vacancy_list_dou_ua(search_request)
+                self.__get_vacancy_list_work_ua(search_request, self.__wd1)
+                self.__get_vacancy_list_dou_ua(search_request, self.__wd1)
                 all_jobs = len(self.__vacancies_links['dou_ua_links']) + len(self.__vacancies_links['work_ua_links'])
                 f1_time = datetime.datetime.now()
                 if self.__debug > 0:
@@ -285,13 +296,13 @@ class Vacancy:
                 s2_time = datetime.datetime.now()
                 index = 0
                 for job in self.__vacancies_links['work_ua_links']:
-                    self.__get_vacancy_info_work_ua(job)
+                    self.__get_vacancy_info_work_ua(job, self.__wd1)
                     if self.__debug > 0:
                         print(f'\rCollecting vacancies\' information... {round((index + 1) / all_jobs * 100, 2)}%',
                               end='')
                     index += 1
                 for job in self.__vacancies_links['dou_ua_links']:
-                    self.__get_vacancy_info_dou_ua(job)
+                    self.__get_vacancy_info_dou_ua(job, self.__wd1)
                     if self.__debug > 0:
                         print(f'\rCollecting vacancies\' information... {round((index + 1) / all_jobs * 100, 2)}%',
                               end='')
@@ -306,25 +317,27 @@ class Vacancy:
                     print('Exception:', e)
             finally:
                 self.__wd1.close()
-                self.__wd2.close()
-                self.__wd3.close()
                 self.__wd1.quit()
-                self.__wd2.quit()
-                self.__wd3.quit()
 
     def get_vacancies_data_th(self, search_request) -> None:
         """
         :param search_request: (split search requests by space)
         """
+        driver = c_Service(os.getcwd() + "/Vacancies_requirements/WebDrivers/chromedriver(linux)")
+        option = c_Options()
+        if self.__debug < 3:
+            option.headless = True
+        self.__wd1 = webdriver.Chrome(options=option, service=driver)
+        self.__wd2 = webdriver.Chrome(options=option, service=driver)
         self.__path = f'vacancies({"_".join(search_request.split())}).json'
         if not self.__load_data():
             try:
                 if self.__debug > 0:
                     print("Collecting list of vacancies...", end=' ')
                 s1_time = datetime.datetime.now()
-                job_ids_work_ua = threading.Thread(target=self.__get_vacancy_list_work_ua, args=(search_request,),
+                job_ids_work_ua = threading.Thread(target=self.__get_vacancy_list_work_ua, args=(search_request, self.__wd1),
                                                    name='work_ua(1)')
-                job_ids_dou_ua = threading.Thread(target=self.__get_vacancy_list_dou_ua, args=(search_request,),
+                job_ids_dou_ua = threading.Thread(target=self.__get_vacancy_list_dou_ua, args=(search_request, self.__wd2),
                                                   name='dou1_ua(1)')
                 job_ids_work_ua.start()
                 job_ids_dou_ua.start()
@@ -342,7 +355,7 @@ class Vacancy:
                 def work_ua():
                     nonlocal index1, index2
                     for job in self.__vacancies_links['work_ua_links']:
-                        self.__get_vacancy_info_work_ua(job)
+                        self.__get_vacancy_info_work_ua(job, self.__wd1)
                         if self.__debug > 0:
                             print(
                                 f'\rCollecting vacancies\' information... {round((index1 + index2 + 1) / all_jobs * 100, 2)}%',
@@ -352,7 +365,7 @@ class Vacancy:
                 def dou_ua():
                     nonlocal index1, index2
                     for job in self.__vacancies_links['dou_ua_links']:
-                        self.__get_vacancy_info_dou_ua(job)
+                        self.__get_vacancy_info_dou_ua(job, self.__wd2)
                         if self.__debug > 0:
                             print(
                                 f'\rCollecting vacancies\' information... {round((index1 + index2 + 1) / all_jobs * 100, 2)}%',
@@ -389,7 +402,7 @@ class Vacancy:
 if __name__ == '__main__':
     s_time = datetime.datetime.now()
     a = Vacancy()
-    a.get_vacancies_data_th('security')
+    a.get_vacancies_data('security')
     a.to_excel('report(all).xlsx')
     f_time = datetime.datetime.now()
     print(f'Done ({(f_time - s_time).seconds}.{int((f_time - s_time).microseconds)} secs).')
