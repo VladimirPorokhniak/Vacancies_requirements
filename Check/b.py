@@ -19,8 +19,6 @@ wd.get(vacancy_url)
 page_data = BeautifulSoup(wd.page_source, 'html.parser')
 print(page_data.find(attrs={'id': 'job-description'}).text)
 print()
-print(page_data.h3.(
-    
-))
+print(page_data.h3)  
 wd.close()
 wd.quit()
