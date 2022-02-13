@@ -275,10 +275,10 @@ class Vacancy:
         """
         :param search_request: (split search requests by space)
         """
-        driver = f_Service(os.getcwd() + "/Vacancies_requirements/WebDrivers/geckodriver(linux)")
+        driver = f_Service(os.getcwd() + "\WebDrivers\geckodriver(win).exe")
         option = f_Options()
         if self.__debug < 3:
-            option.headless = True
+            option.headless = False
         self.__wd1 = webdriver.Firefox(options=option, service=driver)
         self.__path = f'vacancies({"_".join(search_request.split())}).json'
         if not self.__load_data():
@@ -323,7 +323,7 @@ class Vacancy:
         """
         :param search_request: (split search requests by space)
         """
-        driver = c_Service(os.getcwd() + "/Vacancies_requirements/WebDrivers/chromedriver(linux)")
+        driver = c_Service(os.getcwd() + "\WebDrivers\chromedriver(win).exe")
         option = c_Options()
         if self.__debug < 3:
             option.headless = True
@@ -402,7 +402,7 @@ class Vacancy:
 if __name__ == '__main__':
     s_time = datetime.datetime.now()
     a = Vacancy()
-    a.get_vacancies_data_th('security')
+    a.get_vacancies_data('security')
     a.to_excel('report(all).xlsx')
     f_time = datetime.datetime.now()
     print(f'Done ({(f_time - s_time).seconds}.{int((f_time - s_time).microseconds)} secs).')
