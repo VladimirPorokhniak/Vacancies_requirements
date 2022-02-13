@@ -1,15 +1,9 @@
-import datetime
-import json
 import os
-import re
-import sys
-import time
-import threading
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
+
 
 vacancy_url = 'https://jobs.dou.ua/companies/hacken/vacancies/66381/'
 driver = Service(os.getcwd() + "\WebDrivers\chromedriver(win).exe")

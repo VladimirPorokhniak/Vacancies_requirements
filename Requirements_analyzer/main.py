@@ -1,4 +1,4 @@
-from nltk import ne_chunk, sent_tokenize, pos_tag, word_tokenize
+# from nltk import ne_chunk, sent_tokenize, pos_tag, word_tokenize
 sentence = '— 3+ years of intensive experience in infrastructure architecture and security management, experience as a consultant, security engineer or similar responsibilities;— Mange following solutions: servers running Windows Server, Linux, VMware, Hyper-V, SQL, Active Directory, NGFW, NAC, EDR, SIEM, IPS, WAF;— Experience with site vulnerability assessments utilizing NIST or ISO 27k framework;— Experience with the implementation of continuous monitoring of network and server resources, to include the configuration and tuning of monitoring applications;— Solid network security and Data Center security architectural design and hands-on engineering experience— We appreciate if candidates will have CISSP and/or CCSK certifications;— Candidate must be able to effectively communicate in English (written & verbal).'
 sentence_ua = '''Мы в поиске IT Security Engineer для улучшения и развития наших систем безопасности. 
 В Welltech мы делаем мобильные приложения в категории Health & Fitness, которые входят в мировой TOP3 по доходам от продаж. 
@@ -58,9 +58,9 @@ sentence_ua = '''Мы в поиске IT Security Engineer для улучшен
 Welcom
 
 '''
-for sent in sent_tokenize(sentence):
-    words = word_tokenize(sent)
-    # print(words)
+# for sent in sent_tokenize(sentence):
+#     words = word_tokenize(sent)
+#     # print(words)
 
 from googletrans import Translator
 
